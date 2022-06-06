@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("local")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class MySQLIntegrationTest {
+class MySQLIntegrationTest {
 
     @Autowired
     BookRepository bookRepository;
@@ -19,6 +19,6 @@ public class MySQLIntegrationTest {
     @Test
     void testMySql() {
         long countBefore = bookRepository.count();
-        Assertions.assertThat(countBefore).isGreaterThan(0);
+        Assertions.assertThat(countBefore).isPositive();
     }
 }

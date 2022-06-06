@@ -15,10 +15,43 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @ComponentScan(basePackages = {"com.carlostadeu.sdjpajdbc.dao"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class AuthorDaoIntegrationTest {
+class AuthorDaoIntegrationTest {
 
     @Autowired
     AuthorDao authorDao;
+
+    @Test
+    void testDeleteAuthor() {
+        Author author = new Author("Carlos", "Tadeu");
+
+        Author saved = authorDao.saveNewAuthor(author);
+
+        authorDao.deleteAuthorById(saved.getId());
+
+        Author deleted = authorDao.getById(saved.getId());
+
+        assertThat(deleted).isNull();
+    }
+
+    @Test
+    void testUpdateAuthor() {
+        Author author = new Author("carlos", "t");
+
+        Author saved = authorDao.saveNewAuthor(author);
+
+        saved.setLastName("Tadeu");
+        Author updated = authorDao.updateAuthor(saved);
+
+        assertThat(updated.getLastName()).isEqualTo("Tadeu");
+    }
+
+    @Test
+    void testSaveAuthor() {
+        Author author = new Author("Carlos", "Tadeu");
+
+        Author saved = authorDao.saveNewAuthor(author);
+        assertThat(saved).isNotNull();
+    }
 
     @Test
     void testGetAuthor() {
