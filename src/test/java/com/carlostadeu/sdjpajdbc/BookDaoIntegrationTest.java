@@ -1,6 +1,7 @@
 package com.carlostadeu.sdjpajdbc;
 
 import com.carlostadeu.sdjpajdbc.dao.BookDao;
+import com.carlostadeu.sdjpajdbc.domain.Author;
 import com.carlostadeu.sdjpajdbc.domain.Book;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,15 @@ class BookDaoIntegrationTest {
         assertThat(book.getIsbn()).isEqualTo("978-0321125217");
         assertThat(book.getPublisher()).isEqualTo("Addison Wesley");
         assertThat(book.getTitle()).isEqualTo("Domain-Driven Design");
-        assertThat(book.getAuthorId()).isEqualTo(2);
+        assertThat(book.getAuthor().getId()).isEqualTo(2);
     }
 
     @Test
     void testSaveNewBook() {
-        Book book = new Book("Cálculo", "132-321", "Fictício", 4L);
+        Author author = new Author();
+        author.setId(4L);
+
+        Book book = new Book("Cálculo", "132-321", "Fictício", author);
 
         Book saved = bookDao.saveNewBook(book);
         assertThat(saved).isNotNull();
@@ -47,7 +51,10 @@ class BookDaoIntegrationTest {
 
     @Test
     void testUpdateBook() {
-        Book book = new Book("Linguagem C", "987-789", "Fictício", 4L);
+        Author author = new Author();
+        author.setId(4L);
+
+        Book book = new Book("Linguagem C", "987-789", "Fictício", author);
         Book saved = bookDao.saveNewBook(book);
 
         saved.setPublisher("Pearson");
@@ -58,7 +65,7 @@ class BookDaoIntegrationTest {
 
     @Test
     void testDeleteBook() {
-        Book book = new Book("Linguagem Python", "456-654", "Novatec", 4L);
+        Book book = new Book("Linguagem Python", "456-654", "Novatec", null);
         Book saved = bookDao.saveNewBook(book);
 
         bookDao.deleteBookById(saved.getId());

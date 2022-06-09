@@ -10,9 +10,11 @@ import java.sql.*;
 public class BookDaoImpl implements BookDao {
 
     private final DataSource dataSource;
+    private final AuthorDao authorDao;
 
-    public BookDaoImpl(DataSource dataSource) {
+    public BookDaoImpl(DataSource dataSource, AuthorDao authorDao) {
         this.dataSource = dataSource;
+        this.authorDao = authorDao;
     }
 
     private Book getBookFromRS(ResultSet resultSet) throws SQLException {
@@ -21,7 +23,7 @@ public class BookDaoImpl implements BookDao {
         book.setIsbn(resultSet.getString("isbn"));
         book.setPublisher(resultSet.getString("publisher"));
         book.setTitle(resultSet.getString("title"));
-        book.setAuthorId(resultSet.getLong("author_id"));
+        book.setAuthor(authorDao.getById(resultSet.getLong(5)));
         return book;
     }
 
@@ -70,7 +72,12 @@ public class BookDaoImpl implements BookDao {
                 ps.setString(1, book.getIsbn());
                 ps.setString(2, book.getPublisher());
                 ps.setString(3, book.getTitle());
-                ps.setLong(4, book.getAuthorId());
+
+                if (book.getAuthor() != null)
+                    ps.setLong(4, book.getAuthor().getId());
+                else
+                    ps.setNull(4, -5);
+
                 ps.execute();
 
                 try (Statement statement = connection.createStatement()) {
@@ -96,7 +103,10 @@ public class BookDaoImpl implements BookDao {
                 ps.setString(1, book.getIsbn());
                 ps.setString(2, book.getPublisher());
                 ps.setString(3, book.getTitle());
-                ps.setLong(4, book.getAuthorId());
+
+                if (book.getAuthor() != null)
+                    ps.setLong(4, book.getAuthor().getId());
+
                 ps.setLong(5, book.getId());
                 ps.execute();
             }
